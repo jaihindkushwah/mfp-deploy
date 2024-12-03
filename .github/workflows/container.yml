@@ -21,7 +21,7 @@ jobs:
 
       # Install dependencies and build the project
       - run: npm install --legacy-peer-deps
-      - run: set NODE_OPTIONS=--openssl-legacy-provider
+      - run: export NODE_OPTIONS=--openssl-legacy-provider
       - run: npm run build
 
       # Sync build artifacts to S3 bucket
