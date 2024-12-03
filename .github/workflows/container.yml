@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
 
       # Install dependencies and build the project
-      - run: npm install
+      - run: npm install --legacy-peer-deps
       - run: npm run build
 
       # Sync build artifacts to S3 bucket
