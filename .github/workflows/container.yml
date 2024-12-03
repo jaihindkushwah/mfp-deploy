@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'packages/container/**'
+      # If you want specific branches or tags, specify them here
+      # Remove invalid path-based match
 
 defaults:
   run:
@@ -16,18 +16,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Check out the code
       - uses: actions/checkout@v2
+
+      # Install dependencies and build the project
       - run: npm install
       - run: npm run build
 
+      # Sync build artifacts to S3 bucket
       - uses: shinyinc/action-aws-cli@v1.2
-      - run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
+        with:
+          args: s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: REPLACE_WITH_YOUR_REGION
+          AWS_DEFAULT_REGION: us-east-1 # Replace with your AWS region
+
+      # Invalidate CloudFront cache
       - run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths "/container/latest/index.html"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: REPLACE_WITH_YOUR_REGION
+          AWS_DEFAULT_REGION: us-east-1 # Replace with your AWS region
