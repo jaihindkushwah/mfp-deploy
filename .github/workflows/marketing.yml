@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm install --legacy-peer-deps
-      - run: set NODE_OPTIONS=--openssl-legacy-provider
+      - run: export NODE_OPTIONS=--openssl-legacy-provider
       - run: npm run build
 
       - uses: shinyinc/action-aws-cli@v1.2
